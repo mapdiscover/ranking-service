@@ -1,0 +1,35 @@
+syntax = "proto3";
+service MDRankingService {
+	rpc getIdents(identifiers) returns (identifiersOut);
+	rpc addEntry(entry) returns (status);
+	rpc increaseClick(click) returns (status);
+	rpc feedback(status) returns (status);
+	rpc batch(diff) returns (status);
+	rpc deleteEntry(identifier) returns (status);
+}
+message identifiers {
+	string identifiers = 1;
+	int32 curzoom = 2;
+	int32 minzoom = 3;
+}
+message entry {
+	string identifier = 1;
+	int32 longitude = 2;
+	int32 latitude = 3;
+}
+message click {
+	string identifier = 1;
+	string event = 2;
+}
+message diff {
+	string diff = 1;
+}
+message identifier {
+	string identifier = 1;
+}
+message identifiersOut {
+	string identifiersOut = 1;
+}
+message status {
+	string status = 1;
+}

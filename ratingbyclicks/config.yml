@@ -1,0 +1,57 @@
+dbconnstr: "host=localhost port=5432 user=postgres password=mypasswd dbname=rdb"
+
+environment:
+	GRPC_TRACE: "all"
+	GRPC_VERBOSITY: "DEBUG"
+
+gprc_workers: 3
+
+indexing_threads: 5
+indexing_levelsOfRanking: 5 #Original value: '5'. For debugging changed to '1'
+indexing_tableRegions: regions
+
+ranking_weight:
+  mapclick: 1
+  searchresultclick: 2
+
+ranking_threads: 10
+ranking_datacolumnprefix: trange
+
+ranking_datacolumntimematch:
+  trangea: "00:00-04:00"
+  trangeb: "04:00-08:00"
+  trangec: "08:00-12:00"
+  tranged: "12:00-16:00"
+  trangee: "16:00-20:00"
+  trangef: "20:00-00:00"
+
+getallentries: SELECT * FROM global;
+getentry: SELECT * FROM global WHERE identifier=%s;
+increaseclick: UPDATE global SET {} = {} +%s WHERE identifier=%s;
+createentry: INSERT INTO global VALUES (%s, (select id from regions where st_dwithin(st_setsrid(st_makepoint(%s,%s), 4326), regions.bbox, 0) limit 1), st_setsrid(st_makepoint(%s,%s), 4326), 0, 0, 0, 0, 0, 0);
+deleteentry: DELETE FROM global WHERE identifier=%s;
+getregions: SELECT id FROM regions;
+rankingdatabyregion: SELECT * FROM global WHERE region=%s;
+
+db_extensions:
+  - postgis
+
+table_global:
+  - identifier uuid
+  - region text
+  - bbox geometry
+  - trangea int
+  - trangeb int
+  - trangec int
+  - tranged int
+  - trangee int
+  - trangef int
+
+table_regions:
+  - id text
+  - name text
+  - bbox geometry
+
+tables:
+  - global
+  - regions
